@@ -100,7 +100,6 @@ DoubleNode *DoublyLinkedList::detachFirst()
 /// Use the tail's prev link. Return nullptr if the list is empty.
 DoubleNode *DoublyLinkedList::detachLast()
 {
-    // TODO: implement
     if (headPtr == NULL){
         return nullptr;
     }
@@ -136,6 +135,7 @@ DoubleNode *DoublyLinkedList::detachValue(NodeValue value)
             current->setNext(nullptr);
             return current;
         }
+        current = current->getNext();
     }
     return nullptr;
 }
@@ -143,37 +143,81 @@ DoubleNode *DoublyLinkedList::detachValue(NodeValue value)
 /// Create a node with new and link it in front. Handle the empty list.
 void DoublyLinkedList::pushFrontValue(NodeValue value)
 {
-    // TODO: implement
+    DoubleNode *node = new DoubleNode(value);
+
+    if (headPtr == NULL){
+        headPtr = node;
+        tailPtr = node;
+        count++;
+        return;
+    }
+
+    node->setNext(headPtr);
+    headPtr->setPrev(node);
+    headPtr = node;
+    count++;
 }
 
 /// Create a node with new and link it at the end. Handle the empty list.
 void DoublyLinkedList::pushBackValue(NodeValue value)
 {
-    // TODO: implement
+    DoubleNode *node = new DoubleNode(value);
+
+    if(headPtr == NULL){
+        headPtr = node;
+        tailPtr = node;
+        count++;
+        return;
+    }
+    
+    node->setPrev(tailPtr);
+    tailPtr->setNext(node);
+    tailPtr = node;
+    count++;
 }
 
 /// Detach the first node, read its value, delete the node, return the value.
 /// Empty list -> std::nullopt.
 std::optional<NodeValue> DoublyLinkedList::popFrontValue()
 {
-    // TODO: implement
+    if (headPtr == NULL)
     return std::nullopt;
+
+    DoubleNode *detachedNode = detachFirst();
+    NodeValue value = detachedNode->getValue();
+    
+    delete detachedNode;
+    count--;
+    return std::optional<NodeValue>(value);
 }
 
 /// Detach the last node, read its value, delete the node, return the value.
 /// Empty list -> std::nullopt.
 std::optional<NodeValue> DoublyLinkedList::popBackValue()
 {
-    // TODO: implement
+    if (headPtr == NULL)
     return std::nullopt;
+
+    DoubleNode *detachedNode = detachLast();
+    NodeValue value = detachedNode->getValue();
+
+    delete detachedNode;
+    count--;
+    return std::optional<NodeValue>(value);
 }
 
 /// Remove the FIRST node equal to value and free it.
 /// Return true if something was removed.
 bool DoublyLinkedList::deleteValue(NodeValue value)
 {
-    // TODO: implement
-    return false;
+    DoubleNode *temp = detachValue(value);
+
+    if (temp == nullptr){
+        return false;
+    }
+
+    free(temp);
+    return true;
 }
 
 /// Return true if any node holds value.
